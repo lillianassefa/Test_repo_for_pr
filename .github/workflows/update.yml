@@ -1,0 +1,42 @@
+name: Process JSON File
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  process_json_file:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Extract PR body
+        id: extract_pr_body
+        run: echo "${{ github.event.pull_request.body }}" > pr_body.json
+
+      - name: Check for JSON content in PR body
+        id: check_json_content
+        run: |
+          if grep -q '{' pr_body.json; then
+            echo "json_found=true" >> $GITHUB_ENV
+            echo "Extracting JSON content from PR body"
+            python -c "import json, sys; body = open('pr_body.json').read(); start = body.find('{'); end = body.rfind('}') + 1; json_content = body[start:end]; json_data = json.loads(json_content); open('update_details.json', 'w').write(json.dumps(json_data, indent=4))"
+          else
+            echo "json_found=false" >> $GITHUB_ENV
+          fi
+
+      - name: Setup Python
+        if: env.json_found == 'true'
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        if: env.json_found == 'true'
+        run: pip install jsonschema
+
+      - name: Process JSON File
+        if: env.json_found == 'true'
+        run: python update_process.py update_details.json
