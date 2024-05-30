@@ -18,18 +18,16 @@ jobs:
           echo "PR body saved to pr_body.json"
           cat pr_body.json
 
-      - name: Remove Markdown code block syntax and extract JSON
-        run: |
-          awk '/```json/,/```/' pr_body.json | sed '/```/d' > extracted_json.json
-          echo "Extracted JSON using awk:"
-          cat extracted_json.json
-
       - name: Setup Python and Install Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install python3-pip
           pip3 install jsonschema  # Assuming jsonschema is needed
           echo "Python and dependencies installed."
+      - name:  Run specific function
+        run: | 
+          python3 -m update correct_and_parse_json_like_content(pr_body.json)
+
 
       - name: Process JSON File
         run: |
