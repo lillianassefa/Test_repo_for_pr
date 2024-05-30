@@ -12,58 +12,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Extract PR body
-        id: extract_pr_body
+      - name: Extract PR body and save as Markdown file
         run: echo "${{ github.event.pull_request.body }}" > pr_body.md
         
       - name: Remove Markdown code block syntax and extract JSON
         run: |
-          # Strip out the triple backticks and any other Markdown content
           sed -n -e '/```json/,/```/ p' pr_body.md | sed '/```/d' > extracted_json.json
-          # Optionally, you can check the content
           cat extracted_json.json
 
-      - name: Parse JSON and Perform Actions
+      - name: Install Python and Dependencies
         run: |
-          if [ -s extracted_json.json ]; then
-            echo "JSON found and extracted, processing..."
-            # Proceed with further JSON processing here
-            python -c 'import json, sys; try: data = json.load(open("extracted_json.json")); print(data) except json.JSONDecodeError as e: print(f"JSON decode error: {e}"); sys.exit(1)'
-          else
-            echo "No JSON found or file is empty."
-            exit 1
-
-      - name: Upload PR body as an artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: pr-body
-          path: pr_body.json
-      - name: Print PR Body
-        run: cat pr_body.json
-        
-
-      - name: Check for JSON content in PR body
-        id: check_json_contentaut
-        run: |
-          if grep -q '{' pr_body.json; then
-            echo "json_found=true" >> $GITHUB_ENV
-            echo "Extracting JSON content from PR body"
-            python -c "import json, sys; body = open('pr_body.json').read(); start = body.find('{'); end = body.rfind('}') + 1; json_content = body[start:end]; json_data = json.loads(json_content); open('update_details.json', 'w').write(json.dumps(json_data, indent=4))"
-          else
-            echo "json_found=false" >> $GITHUB_ENV
-          fi
-        
-
-      - name: Setup Python
-        if: env.json_found == 'true'
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.10'
-
-      - name: Install dependencies
-        if: env.json_found == 'true'
-        run: pip install jsonschema
+          sudo apt-get update
+          sudo apt-get install python3-pip
+          pip3 install jsonschema  # Assuming jsonschema is needed later
 
       - name: Process JSON File
-        if: env.json_found == 'true'
-        run: python update_process.py update_details.json
+        run: python3 update.py extracted_json.json
+
+      - name: Upload PR body as an artifact
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: failed-pr-body
+          path: pr_body.md
+
