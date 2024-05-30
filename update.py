@@ -63,14 +63,15 @@ def process_json_file(file_path):
     for i, issue in enumerate(pr_data["KnownIssues"], start=1):
         print(f"  Issue {i}: {issue}")
 
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python process_json_file.py <path_to_json_file>")
-        sys.exit(1)
+# if __name__ == "__main__":
+#     if len(sys.argv) != 2:
+#         print("Usage: python process_json_file.py <path_to_json_file>")
+#         sys.exit(1)
     
-    file_path = sys.argv[1]
-    if not os.path.exists(file_path):
-        print(f"File {file_path} does not exist")
-        sys.exit(1)
+#     file_path = sys.argv[1]
+#     if not os.path.exists(file_path):
+#         print(f"File {file_path} does not exist")
+#         sys.exit(1)
     
-    process_json_file(file_path)
+#     process_json_file(file_path)
+# Print<<(print check)
