@@ -1,33 +1,28 @@
 import json
 import re
-import sys
 
-def correct_and_parse_json_like_content(content):
-    corrected_content = re.sub(r'(\w+)(\s*:\s*)', r'"\1"\2', content)
-    corrected_content = re.sub(r'(:\s*)([^\d\[\{"\'][\w\s,.]+)([,\]\}])', r'\1"\2"\3', corrected_content)
-    return corrected_content
+def correct_json_like_content(content):
+    # Correcting missing quotes around keys
+    content = re.sub(r'(\w+)\s*:', r'"\1":', content)
+    # Correcting missing quotes around string values
+    content = re.sub(r':\s*([^",{}\[\]\d]+)', r': "\1"', content)
+    # Ensure the last values before closing brackets have correct commas
+    content = re.sub(r'("[^"]+")\s*([}\]])', r'\1,\2', content)
+    return content
 
-def parse_and_validate_json(data):
-    data = correct_and_parse_json_like_content(data)
-    pr_data = json.loads(data)
-    required_keys = ["Date", "Category", "Title", "Preview", "BusinessValues", "Highlights", "Updates", "Deprecations", "BugFixes", "KnownIssues"]
-    for key in required_keys:
-        if key not in pr_data:
-            raise ValueError(f"Missing required key: {key}")
-    return pr_data
-
-def main(filename):
+def parse_json(content):
     try:
-        with open(filename, 'r') as file:
-            content = file.read()
-        pr_data = parse_and_validate_json(content)
-        print("JSON parsed and validated successfully:", pr_data)
-    except Exception as e:
-        print(f"Error processing JSON file: {e}")
-        sys.exit(1)
+        return json.loads(content)
+    except json.JSONDecodeError as e:
+        print("Failed to decode JSON:", e)
+        exit(1)
+
+def main():
+    with open('pr_body.json', 'r') as file:
+        content = file.read()
+    corrected_content = correct_json_like_content(content)
+    data = parse_json(corrected_content)
+    print("Processed Data:", data)
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python update.py <filename>")
-        sys.exit(1)
-    main(sys.argv[1])
+    main()
