@@ -18,7 +18,7 @@ def parse_json(content):
         exit(1)
 
 def main():
-    with open('pr_body.json', 'r') as file:
+    with open('pr_body', 'r') as file:
         content = file.read()
     corrected_content = correct_json_like_content(content)
     data = parse_json(corrected_content)
