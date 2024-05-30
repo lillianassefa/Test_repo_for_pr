@@ -21,6 +21,7 @@ def main():
     with open('pr_body', 'r') as file:
         content = file.read()
     corrected_content = correct_json_like_content(content)
+    print("here is corrected context", corrected_content)
     data = parse_json(corrected_content)
     print("Processed Data:", data)
 
