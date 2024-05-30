@@ -14,13 +14,13 @@ jobs:
 
       - name: Extract PR body and save as Markdown file
         run: |
-          echo "${{ github.event.pull_request.body }}" > pr_body
-          echo "PR body saved to pr_body"
-          cat pr_body
+          echo "${{ github.event.pull_request.body }}" > pr_body.json
+          echo "PR body saved to pr_body.json"
+          cat pr_body.json
 
       - name: Remove Markdown code block syntax and extract JSON
         run: |
-          awk '/```json/,/```/' pr_body.md | sed '/```/d' > extracted_json.json
+          awk '/```json/,/```/' pr_body.json | sed '/```/d' > extracted_json.json
           echo "Extracted JSON using awk:"
           cat extracted_json.json
 
