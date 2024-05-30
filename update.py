@@ -34,7 +34,7 @@ def main():
     with open('pr_body', 'r') as file:
         content = file.read()
     print("here is the content", content)
-    corrected_content = correct_json_like_content(content)
+    corrected_content = correct_json_formatting(content)
     print("here is corrected context", corrected_content)
     data = parse_json(corrected_content)
     print("Processed Data:", data)
