@@ -14,9 +14,9 @@ jobs:
 
       - name: Extract PR body and save as JSON file
         run: |
-          echo "${{ github.event.pull_request.body }}" > pr_body.json
+          echo "${{ github.event.pull_request.body }}" > pr_body
           echo "PR body saved to pr_body.json"
-          cat pr_body.json  # Adding this to view what's being saved
+          cat pr_body  # Adding this to view what's being saved
 
       - name: Setup Python and Install Dependencies
         run: |
