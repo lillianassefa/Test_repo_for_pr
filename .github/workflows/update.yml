@@ -14,7 +14,24 @@ jobs:
 
       - name: Extract PR body
         id: extract_pr_body
-        run: echo "${{ github.event.pull_request.body }}" > pr_body.json 
+        run: echo "${{ github.event.pull_request.body }}" > pr_body.md
+        
+      - name: Remove Markdown code block syntax and extract JSON
+        run: |
+          # Strip out the triple backticks and any other Markdown content
+          sed -n -e '/```json/,/```/ p' pr_body.md | sed '/```/d' > extracted_json.json
+          # Optionally, you can check the content
+          cat extracted_json.json
+
+      - name: Parse JSON and Perform Actions
+        run: |
+          if [ -s extracted_json.json ]; then
+            echo "JSON found and extracted, processing..."
+            # Proceed with further JSON processing here
+            python -c 'import json, sys; try: data = json.load(open("extracted_json.json")); print(data) except json.JSONDecodeError as e: print(f"JSON decode error: {e}"); sys.exit(1)'
+          else
+            echo "No JSON found or file is empty."
+            exit 1
 
       - name: Upload PR body as an artifact
         uses: actions/upload-artifact@v2
