@@ -18,6 +18,29 @@ def main():
 
     data = parse_json(content)
     print("Processed Data:", data)
+        # Extracting and storing data into variables
+    date = data['Date']
+    category = data['Category']
+    title = data['Title']
+    preview = data['Preview']
+    business_values = data['BusinessValues']
+    highlights = data['Highlights']
+    updates = data['Updates']
+    deprecations = data['Deprecations']
+    bug_fixes = data['BugFixes']
+    known_issues = data['KnownIssues']
+
+    # Example usage: print the extracted data
+    print(f"Date: {date}")
+    print(f"Category: {category}")
+    print(f"Title: {title}")
+    print(f"Preview: {preview}")
+    print("Business Values:", business_values)
+    print("Highlights:", highlights)
+    print("Updates:", updates)
+    print("Deprecations:", deprecations)
+    print("Bug Fixes:", bug_fixes)
+    print("Known Issues:", known_issues)
 
 if __name__ == "__main__":
     main()
