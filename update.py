@@ -1,25 +1,25 @@
 import json
 import re
 
-def correct_json_like_content(content):
-    print("Original content:", content)
-    
-    # Escape already escaped quotes to prevent double escaping
-    content = re.sub(r'\\"', r'"', content)
-    
-    # Correcting missing quotes around keys
-    content = re.sub(r'(?<!")(\b\w+)\b(?=\s*:)', r'"\1"', content)
-    
-    # Correcting missing quotes around string values
-    content = re.sub(r':\s*([\w\s,.-]+)(?=[,\]\}])', r': "\1"', content)
-    
-    # Ensure no double quotes on already quoted strings
-    content = re.sub(r'"\s*"', r'"', content)
-    
-    # Ensure the last values before closing brackets have correct commas
-    content = re.sub(r'("[^"]+")\s*([}\]])', r'\1,\2', content)
-    
-    print("Corrected content:", content)
+import re
+import json
+
+def correct_json_formatting(content):
+    print("Entered first function with original:", content)
+    # Escape unescaped line breaks within strings
+    content = re.sub(r'(?<=[^\\])\n', '\\\\n', content)
+
+    # Ensure all strings are correctly closed
+    content = re.sub(r'([^\\])"', r'\1\\"', content)
+    content = re.sub(r'\\\\"', r'\\"', content)  # Correct double escaping caused by the line above
+
+    # Correct missing quotes at the end of values
+    content = re.sub(r'([^"])\s*\n\s*"', r'\1",\n"', content)
+
+    # Attempt to fix any remaining string termination issues
+    content = re.sub(r'([^"])\s*,\s*\n\s*}', r'\1"\n}', content)
+    content = re.sub(r'([^"])\s*\n\s*}', r'\1"\n}', content)
+    print("Final content,", content)
     return content
 
 def parse_json(content):
