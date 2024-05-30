@@ -2,13 +2,24 @@ import json
 import re
 
 def correct_json_like_content(content):
-    print("entered the function 1 with:" ,content)
+    print("Original content:", content)
+    
+    # Escape already escaped quotes to prevent double escaping
+    content = re.sub(r'\\"', r'"', content)
+    
     # Correcting missing quotes around keys
-    content = re.sub(r'(\w+)\s*:', r'"\1":', content)
+    content = re.sub(r'(?<!")(\b\w+)\b(?=\s*:)', r'"\1"', content)
+    
     # Correcting missing quotes around string values
-    content = re.sub(r':\s*([^",{}\[\]\d]+)', r': "\1"', content)
+    content = re.sub(r':\s*([\w\s,.-]+)(?=[,\]\}])', r': "\1"', content)
+    
+    # Ensure no double quotes on already quoted strings
+    content = re.sub(r'"\s*"', r'"', content)
+    
     # Ensure the last values before closing brackets have correct commas
     content = re.sub(r'("[^"]+")\s*([}\]])', r'\1,\2', content)
+    
+    print("Corrected content:", content)
     return content
 
 def parse_json(content):
