@@ -25,7 +25,7 @@ jobs:
           echo "Python and dependencies installed."
 
       - name: Process JSON File
-        run: python3 update.py pr_body.json
+        run: python3 update.py pr_body
 
       - name: Commit and Push Processed JSON
         run: |
