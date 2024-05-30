@@ -16,10 +16,12 @@ jobs:
         run: |
           echo "${{ github.event.pull_request.body }}" > pr_body.md
           echo "PR body saved to pr_body.md"
+          cat pr_body.md
 
       - name: Remove Markdown code block syntax and extract JSON
         run: |
           sed -n -e '/```json/,/```/ p' pr_body.md | sed '/```/d' > extracted_json.json
+          cat pr_body.md
           echo "Extracted JSON:"
           cat extracted_json.json
 
@@ -32,7 +34,7 @@ jobs:
 
       - name: Process JSON File
         run: |
-          python3 your_script.py extracted_json.json
+          python3 update.py extracted_json.json
           echo "Processed JSON file successfully."
 
       - name: Commit and Push Processed JSON
