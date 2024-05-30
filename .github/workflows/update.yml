@@ -13,26 +13,42 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Extract PR body and save as Markdown file
-        run: echo "${{ github.event.pull_request.body }}" > pr_body.md
-        
+        run: |
+          echo "${{ github.event.pull_request.body }}" > pr_body.md
+          echo "PR body saved to pr_body.md"
+
       - name: Remove Markdown code block syntax and extract JSON
         run: |
           sed -n -e '/```json/,/```/ p' pr_body.md | sed '/```/d' > extracted_json.json
+          echo "Extracted JSON:"
           cat extracted_json.json
 
-      - name: Install Python and Dependencies
+      - name: Setup Python and Install Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install python3-pip
-          pip3 install jsonschema  # Assuming jsonschema is needed later
+          pip3 install jsonschema  # Assuming jsonschema is needed
+          echo "Python and dependencies installed."
 
       - name: Process JSON File
-        run: python3 update.py extracted_json.json
+        run: |
+          python3 your_script.py extracted_json.json
+          echo "Processed JSON file successfully."
 
-      - name: Upload PR body as an artifact
+      - name: Commit and Push Processed JSON
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git add extracted_json.json
+          git commit -m "Update processed JSON"
+          git push
+          echo "Committed and pushed the processed JSON file."
+
+      - name: Upload PR body as an artifact if the process fails
         if: failure()
         uses: actions/upload-artifact@v2
         with:
           name: failed-pr-body
           path: pr_body.md
-
+        
+         
