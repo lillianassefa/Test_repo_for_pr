@@ -12,33 +12,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Extract PR body and save as Markdown file
+      - name: Extract PR body and save as JSON file
         run: |
           echo "${{ github.event.pull_request.body }}" > pr_body.json
           echo "PR body saved to pr_body.json"
-          cat pr_body.json
 
       - name: Setup Python and Install Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install python3-pip
-          pip3 install jsonschema  # Assuming jsonschema is needed
           echo "Python and dependencies installed."
-      - name:  Run specific function
-        run: | 
-          python3 -m update correct_and_parse_json_like_content(pr_body.json)
-
 
       - name: Process JSON File
-        run: |
-          python3 update.py extracted_json.json
-          echo "Processed JSON file successfully."
+        run: python3 update.py pr_body.json
 
       - name: Commit and Push Processed JSON
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
-          git add extracted_json.json
+          git add pr_body.json  # Make sure to add the correct file
           git commit -m "Update processed JSON"
           git push
           echo "Committed and pushed the processed JSON file."
@@ -48,6 +40,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: failed-pr-body
-          path: pr_body.md
-        
-         
+          path: pr_body.json

@@ -4,44 +4,30 @@ import sys
 
 def correct_and_parse_json_like_content(content):
     corrected_content = re.sub(r'(\w+)(\s*:\s*)', r'"\1"\2', content)
-    corrected_content = re.sub(r'(:\s*)([^\d\[\{"][\w\s]+)([,\]\}])', r'\1"\2"\3', corrected_content)
-    corrected_content = re.sub(r'(:\s*)([^\d\[\{"][\w\s]+)(\s*[\]\}])', r'\1"\2"\3', corrected_content)
-    print(corrected_content)
+    corrected_content = re.sub(r'(:\s*)([^\d\[\{"\'][\w\s,.]+)([,\]\}])', r'\1"\2"\3', corrected_content)
     return corrected_content
-def preprocess_data(data):
-    # Adding quotes around keys
-    data = re.sub(r'(\w+):', r'"\1":', data)
-    # Adding quotes around string values
-    data = re.sub(r':\s*([\w\s,.]+)', r': "\1"', data)
-    return data
 
-def parse_data(data):
-    data = preprocess_data(data)
-    return json.loads(data)
-
-
-
-def validate_json(data):
+def parse_and_validate_json(data):
+    data = correct_and_parse_json_like_content(data)
+    pr_data = json.loads(data)
     required_keys = ["Date", "Category", "Title", "Preview", "BusinessValues", "Highlights", "Updates", "Deprecations", "BugFixes", "KnownIssues"]
     for key in required_keys:
-        if key not in data:
+        if key not in pr_data:
             raise ValueError(f"Missing required key: {key}")
+    return pr_data
 
-def process_json_file(content):
-    corrected_content = correct_and_parse_json_like_content(content)
+def main(filename):
     try:
-        pr_data = json.loads(corrected_content)
-    except json.JSONDecodeError:
-        print("Failed to decode JSON")
+        with open(filename, 'r') as file:
+            content = file.read()
+        pr_data = parse_and_validate_json(content)
+        print("JSON parsed and validated successfully:", pr_data)
+    except Exception as e:
+        print(f"Error processing JSON file: {e}")
         sys.exit(1)
 
-    try:
-        validate_json(pr_data)
-    except ValueError as e:
-        print(f"Validation error: {e}")
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: python update.py <filename>")
         sys.exit(1)
-
-    print("JSON parsed and validated successfully.")
-    # Additional processing can continue here, similar to your existing print statements...
-
-
+    main(sys.argv[1])
