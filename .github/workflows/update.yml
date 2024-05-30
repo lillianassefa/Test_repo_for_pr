@@ -21,7 +21,9 @@ jobs:
         with:
           name: pr-body
           path: pr_body.json
-      
+      - name: Print PR Body
+        run: cat pr_body.json
+        
 
       - name: Check for JSON content in PR body
         id: check_json_contentaut
