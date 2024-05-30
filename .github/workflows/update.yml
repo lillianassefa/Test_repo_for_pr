@@ -16,6 +16,7 @@ jobs:
         run: |
           echo "${{ github.event.pull_request.body }}" > pr_body.json
           echo "PR body saved to pr_body.json"
+          cat pr_body.json  # Adding this to view what's being saved
 
       - name: Setup Python and Install Dependencies
         run: |
@@ -30,7 +31,7 @@ jobs:
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
-          git add pr_body.json  # Make sure to add the correct file
+          git add pr_body.json
           git commit -m "Update processed JSON"
           git push
           echo "Committed and pushed the processed JSON file."
