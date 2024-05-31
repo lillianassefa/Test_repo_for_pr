@@ -14,9 +14,9 @@ jobs:
 
       - name: Extract PR body and save as JSON file
         run: |
-          echo "${{ github.event.pull_request.body }}" > pr_body
+          echo "${{ github.event.pull_request.body }}" > pr_body.json
           echo "PR body saved to pr_body.json"
-          cat pr_body  # Adding this to view what's being saved
+          cat pr_body.json  # Adding this to view what's being saved
 
       - name: Setup Python and Install Dependencies
         run: |
@@ -25,13 +25,13 @@ jobs:
           echo "Python and dependencies installed."
 
       - name: Process JSON File
-        run: python3 update.py pr_body
+        run: python3 update.py pr_body.json
 
       - name: Commit and Push Processed JSON
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
-          git add pr_body
+          git add pr_body.json
           git commit -m "Update processed JSON"
           git push
           echo "Committed and pushed the processed JSON file."
@@ -41,4 +41,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: failed-pr-body
-          path: pr_body
+          path: pr_body.json
