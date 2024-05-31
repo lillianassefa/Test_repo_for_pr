@@ -20,7 +20,7 @@ def main():
     print(type(content), "typeeeeeeee")
     
     data = parse_json(content)
-    print("Processed Data:", data, type(data, "final typeeeeeeeee"))
+    print("Processed Data:", data, type(data), "final typeeeeeeeee")
 
 if __name__ == "__main__":
     main()
