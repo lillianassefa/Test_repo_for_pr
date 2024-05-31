@@ -16,7 +16,7 @@ def parse_json(content):
 
 def main():
     print("entered main")
-    with open('pr_body', 'r') as file:
+    with open('pr_body.json', 'r') as file:
         content = file.read()
     print("here is the content", content)
     print(type(content), "typeeeeeeee")
