@@ -4,7 +4,10 @@ import re
 
 def parse_json(content):
     try:
-        return json.loads(content)
+        temp = json.dumps(content)
+        result = json.loads(temp)
+        return result
+
     except json.JSONDecodeError as e:
         print("Failed to decode JSON:", e)
         exit(1)
