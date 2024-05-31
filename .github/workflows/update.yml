@@ -12,12 +12,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Extract PR body and save as JSON file
+      - name: Save PR Body to JSON File
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
         run: |
-          echo "${{ github.event.pull_request.body }}" 
-          ${{github.event.pull_request.body}}  > pr_body.json
+          echo "$PR_BODY" > pr_body.json
           echo "PR body saved to pr_body.json"
-          cat pr_body.json  # Adding this to view what's being saved
+          cat pr_body.json
 
       - name: Setup Python and Install Dependencies
         run: |
