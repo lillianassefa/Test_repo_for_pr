@@ -14,7 +14,7 @@ def main():
     with open('pr_body', 'r') as file:
         content = file.read()
     print("here is the content", content)
-   
+    print(type(content), "typeeeeeeee")
     
     data = parse_json(content)
     print("Processed Data:", data)
