@@ -6,7 +6,7 @@ def parse_json(content):
     try:
         temp = json.dumps(content)
         print("temp type", type(temp))
-        result = [json.loads(str(temp))]
+        result = dict(json.loads(str(temp)))
         print("result type", type(result))
         return result
 
