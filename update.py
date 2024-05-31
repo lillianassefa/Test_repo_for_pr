@@ -5,7 +5,8 @@ import re
 def parse_json(content):
     try:
         temp = json.dumps(content)
-        result = json.loads(temp)
+        print("temp type", type(temp))
+        result = json.loads(str(temp))
         return result
 
     except json.JSONDecodeError as e:
